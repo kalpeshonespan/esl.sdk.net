@@ -994,6 +994,34 @@ namespace Silanis.ESL.SDK.Services
             }
         }
 
+        public Page<Dictionary<String, String>> GetPackagesFields (DocumentPackageStatus status, PageRequest request, ISet<String> fields)
+        {
+            string path = template.UrlFor (UrlTemplate.PACKAGE_FIELDS_LIST_PATH)
+                .Replace ("{status}", new PackageStatusConverter (status).ToAPIPackageStatus ())
+                .Replace ("{from}", request.From.ToString ())
+                .Replace ("{to}", request.To.ToString ())
+                .Replace ("{fields}", string.Join(",", fields))
+                .Build ();
+
+            try 
+            {
+                string response = restClient.Get (path);
+                Result<Dictionary<String, String>> results = JsonConvert.DeserializeObject<Result<Dictionary<String, String>>> (response, settings);
+
+                return new Page<Dictionary<String, String>> (results.Results, results.Count.Value, request);
+            } 
+            catch (EslServerException e) 
+            {
+                Console.WriteLine (e.StackTrace);
+                throw new EslServerException ("Could not get package list. Exception: " + e.Message, e.ServerError, e);
+            } 
+            catch (Exception e) 
+            {
+                Console.WriteLine (e.StackTrace);
+                throw new EslException ("Could not get package list. Exception: " + e.Message, e);
+            }
+        }
+
         public Page<DocumentPackage> GetUpdatedPackagesWithinDateRange(DocumentPackageStatus status, PageRequest request, DateTime from, DateTime to)
         {
             string fromDate = DateHelper.dateToIsoUtcFormat(from);
@@ -1585,6 +1613,40 @@ namespace Silanis.ESL.SDK.Services
             catch (Exception e)
             {
                 throw new EslException("Could not get support configuration." + " Exception: " + e.Message, e);
+            }
+        }
+
+        public ReferencedConditions GetReferencedConditions(String packageId)
+        {
+            return this.GetReferencedConditions(packageId, null, null);
+        }
+
+        public ReferencedConditions GetReferencedConditions(String packageId, String documentId)
+        {
+            return this.GetReferencedConditions(packageId, documentId, null);
+        }
+
+        public ReferencedConditions GetReferencedConditions(String packageId, String documentId, String fieldId)
+        {
+            String path = template.UrlFor(UrlTemplate.PACKAGE_REFERENCED_CONDITIONS_PATH)
+                .Replace("{packageId}", packageId)
+                .AddParam("documentId", documentId)
+                .AddParam("fieldId", fieldId)
+                .Build();
+
+            try
+            {
+                string stringResponse = restClient.Get(path);
+                API.ReferencedConditions apiReferencedConditions = JsonConvert.DeserializeObject<API.ReferencedConditions>(stringResponse, settings);
+                return ReferencedConditionsConverter.ToSDK(apiReferencedConditions);
+            }
+            catch (EslServerException e)
+            {
+                throw new EslServerException ("Could not get referenced conditions." + " Exception: " + e.Message, e.ServerError, e);
+            }
+            catch (Exception e)
+            {
+                throw new EslException ("Could not get referenced conditions." + " Exception: " + e.Message, e);
             }
         }
     }

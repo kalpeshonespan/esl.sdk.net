@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\DocumentWorkflowExample.cs" />
+    <Compile Include="src\PackageReferencedConditionsExample.cs" />
     <Compile Include="src\SignerOrderingExample.cs" />
     <Compile Include="src\SignerSpecificEmailMessageExample.cs" />
     <Compile Include="src\GenericFieldsExample.cs" />
@@ -169,6 +170,8 @@
     <Compile Include="src\SignerSSOExample.cs" />
     <Compile Include="src\AdditionalRequestHeadersExample.cs" />
     <Compile Include="src\DeleteDocumentsExample.cs" />
+    <Compile Include="src\ConditionalFieldExample.cs" />
+    <Compile Include="src\GetPackageFieldsListExample.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
