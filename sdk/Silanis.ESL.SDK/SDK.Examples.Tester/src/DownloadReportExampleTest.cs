@@ -13,7 +13,8 @@ namespace SDK.Examples
         private System.Object lockThis = new System.Object();
 
 		[Test()]
-		public void VerifyResult()
+        [Category ("Download")] // will be excluded temporarily
+        public void VerifyResult()
 		{
             lock (lockThis)
             {
